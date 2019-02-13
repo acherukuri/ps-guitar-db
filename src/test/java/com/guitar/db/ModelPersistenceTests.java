@@ -1,14 +1,17 @@
 package com.guitar.db;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import com.guitar.db.repository.ModelJpaRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,6 +27,9 @@ import com.guitar.db.repository.ModelRepository;
 public class ModelPersistenceTests {
 	@Autowired
 	private ModelRepository modelRepository;
+
+	@Autowired
+	private ModelJpaRepository modelJpaRepository;
 
 	@PersistenceContext
 	private EntityManager entityManager;
@@ -64,8 +70,25 @@ public class ModelPersistenceTests {
 	}
 
 	@Test
+	public void testGetModelsByPriceRangeAndWoodTypeWithQuery() throws Exception {
+		List<Model> mods = modelJpaRepository.queryByPriceRangeAndWoodType(BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "%Maple%");
+		assertEquals(3, mods.size());
+	}
+
+	@Test
 	public void testGetModelsByType() throws Exception {
-		List<Model> mods = modelRepository.getModelsByType("Electric");
+		List<String> modelTypes = new ArrayList<>();
+		modelTypes.add("Electric");
+		List<Model> mods = modelRepository.getModelsByType(modelTypes);
 		assertEquals(4, mods.size());
+		mods.forEach(model -> {
+			assertEquals("Electric", model.getModelType().getName());
+		});
+	}
+
+	@Test
+	public void testGetModelsCount() throws Exception {
+		long modelCount = modelRepository.getModelCount();
+		assertEquals(9L, modelCount);
 	}
 }
