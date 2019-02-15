@@ -88,6 +88,7 @@ public class ModelPersistenceTests {
 			System.out.println(model.getName());
 		});
 		assertEquals(3, mods.getSize());
+		modelJpaRepository.customMethod();
 	}
 
 	@Test
