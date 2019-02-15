@@ -76,10 +76,19 @@ public class ModelPersistenceTests {
 	}
 
 	@Test
-	public void testGetModelsByType() throws Exception {
+	public void testGetModelsByTypeIn() throws Exception {
 		List<String> modelTypes = new ArrayList<>();
 		modelTypes.add("Electric");
 		List<Model> mods = modelRepository.getModelsByType(modelTypes);
+		assertEquals(4, mods.size());
+		mods.forEach(model -> {
+			assertEquals("Electric", model.getModelType().getName());
+		});
+	}
+
+	@Test
+	public void testGetModelsByType() throws Exception {
+		List<Model> mods = modelJpaRepository.findAllModelsByType("Electric");
 		assertEquals(4, mods.size());
 		mods.forEach(model -> {
 			assertEquals("Electric", model.getModelType().getName());

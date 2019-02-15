@@ -27,5 +27,7 @@ public interface ModelJpaRepository extends JpaRepository<Model, Long> {
 
     List<Model> findByModelTypeNameIn(List<String> types);
 
+    @Query // calls the Model named query
+    List<Model> findAllModelsByType(@Param("name") String name);
 
 }
