@@ -15,6 +15,10 @@ import com.guitar.db.repository.ModelJpaRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.transaction.annotation.Transactional;
@@ -71,8 +75,19 @@ public class ModelPersistenceTests {
 
 	@Test
 	public void testGetModelsByPriceRangeAndWoodTypeWithQuery() throws Exception {
-		List<Model> mods = modelJpaRepository.queryByPriceRangeAndWoodType(BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "%Maple%");
+		Pageable page = new PageRequest(0, 3, Sort.Direction.ASC, "name");
+		List<Model> mods = modelJpaRepository.queryByPriceRangeAndWoodType(BigDecimal.valueOf(1000L), BigDecimal.valueOf(2000L), "%Maple%", page);
 		assertEquals(3, mods.size());
+	}
+
+	@Test
+	public void testPagingAndSorting() throws Exception {
+		Pageable page = new PageRequest(0, 3);
+		Page<Model> mods = modelJpaRepository.findAll(page); // retuns Page object which can give insights into next and previous pages. (Caveat: Fires count query every time)
+		mods.forEach(model -> {
+			System.out.println(model.getName());
+		});
+		assertEquals(3, mods.getSize());
 	}
 
 	@Test
